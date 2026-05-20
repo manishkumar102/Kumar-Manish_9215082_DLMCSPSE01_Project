@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("client")
+  phone     String?
+  avatar    String?
+  location  String?
+  bio       String?
+  interests String?
+  verified  Boolean  @default(false)
+  premium   Boolean  @default(false)
+  suspended Boolean  @default(false)
+  emailNotifications Boolean  @default(true)
+  bookingUpdates     Boolean  @default(true)
+  promotionalEmails  Boolean  @default(true)
+  verificationStatus  String   @default("none") // none, pending, approved, rejected
+  verificationDocs     String?
+  verificationNote     String?
+  businessName         String?
+  businessLicense      String?
+  businessAddress      String?
+  idDocument           String?
+  submittedAt          DateTime?
+  verifiedAt           DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  services          Service[]
+  clientBookings    Booking[]  @relation("ClientBookings")
+  providerBookings  Booking[]  @relation("ProviderBookings")
+  clientReviews     Review[]   @relation("ClientReviews")
+  providerReviews   Review[]   @relation("ProviderReviews")
+  sentMessages      Message[]  @relation("SentMessages")
+  receivedMessages  Message[]  @relation("ReceivedMessages")
+  favorites         Favorite[]   @relation("UserFavorites")
+  notifications     Notification[] @relation("UserNotifications")
+  clientPayments    Payment[]   @relation("ClientPayments")
+  emailLogs         EmailLog[]
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  providerId  String
+  title       String
+  description String
+  category    String
+  price       Float
+  duration    String
+  images      String?
+  location    String
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  featured    Boolean  @default(false)
+  status      String   @default("pending")
+  availability String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  provider  User     @relation(fields: [providerId], references: [id])
+  bookings  Booking[]
+  reviews   Review[]
+  favorites Favorite[] @relation("ServiceFavorites")
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  clientId    String
+  serviceId   String
+  providerId  String
+  date        String
+  time        String
+  guests      Int      @default(1)
+  specialReq  String?
+  totalPrice  Float
+  status      String   @default("pending")
+  paymentId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client   User    @relation("ClientBookings", fields: [clientId], references: [id])
+  provider User    @relation("ProviderBookings", fields: [providerId], references: [id])
+  service  Service @relation(fields: [serviceId], references: [id])
+  reviews  Review[]
+  messages Message[]
+  payment  Payment?
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  bookingId  String
+  clientId   String
+  serviceId  String
+  providerId String
+  rating     Int
+  comment    String?
+  images     String?
+  createdAt  DateTime @default(now())
+
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  client   User    @relation("ClientReviews", fields: [clientId], references: [id])
+  service  Service @relation(fields: [serviceId], references: [id])
+  provider User    @relation("ProviderReviews", fields: [providerId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  bookingId  String?
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  booking  Booking? @relation(fields: [bookingId], references: [id])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  bookingId     String   @unique
+  clientId      String
+  amount        Float
+  currency      String   @default("USD")
+  method        String   @default("card")
+  status        String   @default("pending")
+  cardLast4     String?
+  transactionId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  client   User    @relation("ClientPayments", fields: [clientId], references: [id])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  serviceId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
+  service Service @relation("ServiceFavorites", fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, serviceId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   @default("system")
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  actionUrl String?
+  createdAt DateTime @default(now())
+
+  user User @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  subject   String
+  body      String
+  recipient String
+  status    String   @default("sent")
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

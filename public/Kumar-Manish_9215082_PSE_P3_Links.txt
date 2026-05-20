@@ -1,0 +1,55 @@
+========================================
+ConciergeX - Portfolio Part 3: Links & Login Data
+========================================
+Student: Manish Kumar
+Matriculation No.: 9215082
+Course: DLMCSPSE01 - Project: Software Engineering
+IU International University of Applied Sciences
+========================================
+
+PUBLIC GITHUB REPOSITORY
+------------------------
+https://github.com/manishkumar9215/pse-conciergex
+
+WEB APPLICATION URL
+-------------------
+https://conciergex.vercel.app
+
+DEMO ACCOUNTS (Login Credentials)
+----------------------------------
+1. Admin Account:
+   - Email: admin@conciergex.com
+   - Password: Admin@123
+   - Access: Full platform management (users, services, analytics, verifications, integrations)
+
+2. Client Account:
+   - Email: client@demo.com
+   - Password: Demo@123
+   - Access: Browse services, create bookings, make payments, write reviews, manage favorites, send messages
+
+3. Service Provider Account:
+   - Email: provider@demo.com
+   - Password: Demo@123
+   - Access: Manage services (create/edit/delete), accept/reject bookings, view earnings, submit verification, communicate with clients
+
+APPLICATION OVERVIEW
+--------------------
+ConciergeX is a premium luxury services marketplace web application built with Next.js 16, React 19, TypeScript 5, Prisma ORM, and Tailwind CSS 4. It features:
+- 90 luxury services across 16 categories
+- Three user roles: Admin, Client, Service Provider
+- Service booking with mock payment processing (15% platform fee)
+- Review and rating system
+- Real-time messaging
+- Analytics dashboards with charts
+- Responsive dark luxury theme with gold accents
+- 15 RESTful API endpoints
+- 9 database models with proper relationships
+
+TECHNOLOGY STACK
+----------------
+- Frontend: React 19, Next.js 16, Tailwind CSS 4, shadcn/ui, Framer Motion, Zustand
+- Backend: Next.js API Routes, Prisma ORM, bcryptjs
+- Database: SQLite (development), PostgreSQL-ready for production
+- Tools: Bun, ESLint, GitHub, Docker, Caddy
+
+========================================
